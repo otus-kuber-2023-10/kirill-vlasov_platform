@@ -60,3 +60,58 @@ pvc-517361d2-387f-4045-90c0-f4c1f5fc1dd8   10Gi       RWO            Delete     
   ❯ kubectl exec -it minio-0 bash -- /bin/sh -c 'echo $MINIO_SECRET_KEY'
   minio123
 ```
+
+
+# Выполнено ДЗ №7
+
+- [V] Основное ДЗ kubernetes-security
+
+## В процессе сделано:
+- Запустил кластер инструментом kind и minikube
+- Создал файлы конфигурации согласно заданию в директориях taskXX
+- Проверил работу заданий, через `kubectl describe rolebindings`, например для task03:
+
+```bash
+❯ kubectl apply -f 01-namespace.yml
+namespace/dev created
+❯ kubectl apply -f 02-user-jane.yml
+serviceaccount/jane created
+❯ kubectl apply -f ./03-role-admin.yml
+role.rbac.authorization.k8s.io/admin created
+❯ kubectl apply -f 04-role-admin-binding.yml
+rolebinding.rbac.authorization.k8s.io/admin-role-binding created
+❯ kubectl apply -f 05-user-ken.yml
+serviceaccount/ken created
+❯ kubectl apply -f 06-role-view.yml
+role.rbac.authorization.k8s.io/view created
+❯ kubectl apply -f 07-role-view-binding.yml
+rolebinding.rbac.authorization.k8s.io/view-role-binding created
+
+❯ kubectl get roles -n dev
+NAME    CREATED AT
+admin   2023-11-26T17:57:58Z
+view    2023-11-26T17:59:21Z
+❯ kubectl describe rolebindings.rbac.authorization.k8s.io admin -n dev
+Name:         admin-role-binding
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  Role
+  Name:  admin
+Subjects:
+  Kind  Name  Namespace
+  ----  ----  ---------
+  User  jane  dev
+
+❯ kubectl describe rolebindings.rbac.authorization.k8s.io view -n dev
+Name:         view-role-binding
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  Role
+  Name:  view
+Subjects:
+  Kind  Name  Namespace
+  ----  ----  ---------
+  User  ken   dev
+```
